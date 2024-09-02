@@ -6,7 +6,7 @@ body {
     margin: 0;
     font-size: 90%;
     font-family: 'San Francisco', 'Helvetica Neue', Arial, sans-serif;
-    background-image: url('/Weather-App/src/Background.jpg');
+    background-image: url('../src/Background.jpg');
         /* Adicione sua imagem de fundo aqui */
         background-size: cover;
         background-position: center;
