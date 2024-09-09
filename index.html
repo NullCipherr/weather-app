@@ -237,11 +237,33 @@
 
         let weather = {
             "apikey": "a6f6fef1470f473cb0694459230605",
+            cache: {},
 
-            fetchWeather: function (city) {
-                fetch("https://api.weatherapi.com/v1/current.json?key=a6f6fef1470f473cb0694459230605&q=" + city + "&aqi=no")
-                    .then((response) => response.json())
-                    .then((data) => this.displayWeather(data));
+            fetchWeather: async function (city) {
+                showLoading();
+                try {
+                    if (this.cache[city] && Date.now() - this.cache[city].timestamp < 600000) {
+                        console.log('Usando dados em cache para', city);
+                        this.displayWeather(this.cache[city].data);
+                        return;
+                    }
+
+                    console.time('Tempo de requisição');
+                    const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${this.apikey}&q=${city}&aqi=no`);
+                    console.timeEnd('Tempo de requisição');
+
+                    if (!response.ok) {
+                        throw new Error('Cidade não encontrada');
+                    }
+                    const data = await response.json();
+                    this.cache[city] = { data, timestamp: Date.now() };
+                    this.displayWeather(data);
+                } catch (error) {
+                    console.error('Erro ao buscar dados do clima:', error);
+                    alert('Erro ao buscar dados do clima. Por favor, tente novamente.');
+                } finally {
+                    hideLoading();
+                }
             },
 
             displayWeather: function (data) {
@@ -254,13 +276,21 @@
                 const formattedDate = formatDate(currentDate);
 
                 cityEl.innerHTML = `Clima em ${name}<br><span class="date">${formattedDate}</span>`;
-                iconEl.src = icon;
+                iconEl.src = this.fixIconUrl(icon);
                 descriptionEl.innerText = text;
                 temperatureEl.innerText = `${temp_c}°C`;
                 humidityEl.innerText = `Umidade: ${humidity}%`;
                 windEl.innerText = `Velocidade do Vento: ${wind_kph} km/h`;
 
                 weatherEl.classList.remove("loading");
+                hideLoading();
+            },
+
+            fixIconUrl: function (iconUrl) {
+                if (iconUrl.startsWith('//')) {
+                    return 'https:' + iconUrl;
+                }
+                return iconUrl;
             },
 
             search: function () {
@@ -289,21 +319,50 @@
             return date.toLocaleDateString('pt-BR', options);
         }
 
-        searchEl.addEventListener("click", () => {
-            console.log("Clicado!");
-            weather.search();
-        });
+        // Adicione um indicador de carregamento
+        function showLoading() {
+            weatherEl.classList.add("loading");
+        }
 
-        searchBar.addEventListener("keyup", (event) => {
-            if (event.key === "Enter") {
-                weather.search();
+        function hideLoading() {
+            weatherEl.classList.remove("loading");
+        }
+
+        // Debounce function
+        function debounce(func, delay) {
+            let timeoutId;
+            return function (...args) {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => func.apply(this, args), delay);
+            };
+        }
+
+        const debouncedSearch = debounce(() => {
+            if (searchBar.value) {
+                weather.fetchWeather(searchBar.value);
             }
-        });
+        }, 300);
+
+        searchEl.addEventListener("click", debouncedSearch);
+
+        searchBar.addEventListener("input", debouncedSearch);
 
         locationButton.addEventListener("click", () => {
             weather.getLocationWeather();
         });
 
+        // Função para pré-carregar dados de cidades populares
+        async function preloadPopularCities() {
+            const popularCities = ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Salvador', 'Fortaleza'];
+            for (const city of popularCities) {
+                await weather.fetchWeather(city);
+            }
+        }
+
+        // Chame esta função quando a página carregar
+        window.addEventListener('load', preloadPopularCities);
+
+        // Inicialização
         weather.getLocationWeather();
     </script>
 </body>
