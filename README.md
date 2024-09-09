@@ -18,6 +18,6 @@ Um aplicativo web elegante e responsivo para consultar previsões do tempo em te
 - JavaScript (ES6+)
 - API WeatherAPI
 
-## 👨‍💻 Desenvolvido com ❤️ por [Seu Nome]
+## 👨‍💻 Desenvolvido por Andrei Costa
 
 Sinta-se à vontade para contribuir ou relatar problemas! 🙌
