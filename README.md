@@ -18,6 +18,15 @@ Um aplicativo web elegante e responsivo para consultar previsões do tempo em te
 - JavaScript (ES6+)
 - API WeatherAPI
 
+## 🚀 Como Usar
+
+1. Clone este repositório
+2. Abra o arquivo `index.html` no seu navegador
+3. Digite o nome de uma cidade na barra de pesquisa
+4. Explore as informações meteorológicas!
+
 ## 👨‍💻 Desenvolvido por Andrei Costa
 
-Sinta-se à vontade para contribuir ou relatar problemas! 🙌
+Para mais informações ou relatar problemas, entre em contato: [seu-email@exemplo.com]
+
+📜 Licença: MIT
