@@ -26,5 +26,4 @@ Um aplicativo web elegante e responsivo para consultar previsões do tempo em te
 4. Explore as informações meteorológicas!
 
 ### 👨‍💻 Desenvolvido por Andrei Costa
-
-## 📜 Licença: MIT
+### 📜 Licença: MIT
