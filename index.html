@@ -185,6 +185,48 @@
         .location-button:hover {
             background-color: #45a049;
         }
+
+        /* Estilos atualizados para o histórico de pesquisas */
+        .search-history {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .search-history button {
+            margin: 3px;
+            padding: 5px 8px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.7em;
+            min-width: 40px;
+        }
+
+        .search-history button:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilo atualizado para o botão de alternar unidade de temperatura */
+        .toggle-unit {
+            background-color: #3146659b;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.7em;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 150px;
+        }
+
+        .toggle-unit:hover {
+            background-color: #798d9b;
+        }
     </style>
 </head>
 <body>
@@ -217,6 +259,9 @@
                 <div class="description">Nublado</div>
             </div>
         </div>
+
+        <div class="search-history"></div>
+        <button class="toggle-unit">Alternar °C/°F</button>
     </div>
 
     <footer>
@@ -284,6 +329,8 @@
 
                 weatherEl.classList.remove("loading");
                 hideLoading();
+
+                this.updateSearchHistory(data.location.name);
             },
 
             fixIconUrl: function (iconUrl) {
@@ -310,6 +357,52 @@
                 } else {
                     alert("Geolocalização não é suportada pelo seu navegador. Usando localização padrão.");
                     this.fetchWeather("São Paulo");
+                }
+            },
+
+            updateSearchHistory: function (city) {
+                const historyEl = document.querySelector('.search-history');
+                const abbreviation = this.getAbbreviation(city);
+                const existingButton = Array.from(historyEl.children).find(btn => btn.textContent === abbreviation);
+
+                if (!existingButton) {
+                    const button = document.createElement('button');
+                    button.textContent = abbreviation;
+                    button.title = city; // Adiciona o nome completo da cidade como título
+                    button.addEventListener('click', () => this.fetchWeather(city));
+                    
+                    if (historyEl.children.length >= 5) {
+                        historyEl.removeChild(historyEl.firstChild);
+                    }
+                    
+                    historyEl.appendChild(button);
+                }
+            },
+
+            getAbbreviation: function (city) {
+                const abbreviations = {
+                    'São Paulo': 'SP',
+                    'Rio de Janeiro': 'RJ',
+                    'Belo Horizonte': 'BH',
+                    'Salvador': 'SAL',
+                    'Brasília': 'DF',
+                    'Fortaleza': 'FOR',
+                    'Recife': 'REC',
+                    'Porto Alegre': 'POA',
+                    'Manaus': 'MAN',
+                    'Curitiba': 'CUR'
+                };
+                return abbreviations[city] || city.slice(0, 3).toUpperCase();
+            },
+
+            toggleTemperatureUnit: function () {
+                const currentTemp = parseFloat(temperatureEl.innerText);
+                if (temperatureEl.innerText.includes('°C')) {
+                    const fahrenheit = (currentTemp * 9/5) + 32;
+                    temperatureEl.innerText = `${fahrenheit.toFixed(1)}°F`;
+                } else {
+                    const celsius = (currentTemp - 32) * 5/9;
+                    temperatureEl.innerText = `${celsius.toFixed(1)}°C`;
                 }
             }
         };
@@ -364,6 +457,10 @@
 
         // Inicialização
         weather.getLocationWeather();
+
+        document.querySelector('.toggle-unit').addEventListener('click', () => {
+            weather.toggleTemperatureUnit();
+        });
     </script>
 </body>
 </html>
