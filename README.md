@@ -25,8 +25,6 @@ Um aplicativo web elegante e responsivo para consultar previsões do tempo em te
 3. Digite o nome de uma cidade na barra de pesquisa
 4. Explore as informações meteorológicas!
 
-## 👨‍💻 Desenvolvido por Andrei Costa
+### 👨‍💻 Desenvolvido por Andrei Costa
 
-Para mais informações ou relatar problemas, entre em contato: [seu-email@exemplo.com]
-
-📜 Licença: MIT
+## 📜 Licença: MIT
